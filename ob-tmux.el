@@ -283,7 +283,7 @@ Argument OB-SESSION: the current ob-tmux session."
   "If tmux window (passed in OB-SESSION) exists, send BODY to it.
 
 Argument OB-SESSION: the current ob-tmux session."
-  (let ((lines (split-string body "[\n\r]+")))
+  (let ((lines (split-string body "\n\r")))
     (when (ob-tmux--window-alive-p ob-session)
       (mapc (lambda (l)
 	      (ob-tmux--send-keys ob-session (concat l "\n")))
