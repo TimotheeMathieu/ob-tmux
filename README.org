@@ -7,177 +7,44 @@ terminal, especially when some interactivity is required. The
 functionality can be used to document software installation, build
 instructions, and administrative tasks. The documentation can be
 tested and adjusted while it is written.
-* Installation
 
-This package is available on from [[https://melpa.org/#/ob-tmux][MELPA]].
+* My changes
 
-If you have added MELPA to your package sources, you can install
-ob-tmux interactively
-#+BEGIN_EXAMPLE
-M-x package-install [RET] ob-tmux [RET]
-#+END_EXAMPLE
+This repository is forked from ob-tmux main repository where a full
+documentation can be found. In addition to the features already 
+proposed in ob-tmux I added a polymode for ob-tmux that can be used
+to enjoy language dependent behavior in the source blocks.
 
-Alternatively, you can copy the ~ob-tmux.el~ file to a directory in
-your ~load-path~.
-** Configuration
-In your ~.emacs~ or ~.emacs.d/init.el~ file, add the following:
-#+BEGIN_SRC elisp
-  (require 'ob-tmux)
-  (setq org-babel-default-header-args:tmux
-        '((:results . "silent")	;
-          (:session . "default")	; The default tmux session to send code to
-          (:socket  . nil)))      ; The default tmux socket to communicate with
+This includes:
+- indentations
+- syntax highlighting
+- lsp-mode
+...
 
-  ;; The tmux sessions are prefixed with the following string.
-  ;; You can customize this if you like.
-  (setq org-babel-tmux-session-prefix "ob-")
+I use this mainly for shell and python blocks, I also made a few 
+changes to the main ob-tmux features to accomodate python. The 
+polymode is declared locally on each file so as not to polute all
+my org files.
 
-  ;; The terminal that will be used.
-  ;; You can also customize the options passed to the terminal.
-  (setq org-babel-tmux-terminal "xterm")
-  (setq org-babel-tmux-terminal-opts '("-T" "ob-tmux" "-e"))
-  ; The default terminal is "gnome-terminal" with options "--".
+Example of org-mode file:
 
-  ;; Finally, if your tmux is not in your $PATH for whatever reason, you
-  ;; may set the path to the tmux binary as follows:
-  (setq org-babel-tmux-location "/usr/bin/tmux")
-#+END_SRC
+```
+# -*- mode: org;  mode:visual-line ; mode:poly-tmux -*-
 
-If you use =use-package=, you can also write
-#+BEGIN_SRC elisp
-  (use-package ob-tmux
-    ;; Install package automatically (optional)
-    :ensure t
-    :custom
-    (org-babel-default-header-args:tmux
-     '((:results . "silent")	;
-       (:session . "default")	; The default tmux session to send code to
-       (:socket  . nil)))		; The default tmux socket to communicate with
-    ;; The tmux sessions are prefixed with the following string.
-    ;; You can customize this if you like.
-    (org-babel-tmux-session-prefix "ob-")
-    ;; The terminal that will be used.
-    ;; You can also customize the options passed to the terminal.
-    ;; The default terminal is "gnome-terminal" with options "--".
-    (org-babel-tmux-terminal "xterm")
-    (org-babel-tmux-terminal-opts '("-T" "ob-tmux" "-e"))
-    ;; Finally, if your tmux is not in your $PATH for whatever reason, you
-    ;; may set the path to the tmux binary as follows:
-    (org-babel-tmux-location "/usr/bin/tmux"))
-#+END_SRC
-* Usage
-You can start a new terminal window with a tmux session as follows:
-: #+BEGIN_SRC tmux :session hello
-: echo hello
-: #+END_SRC
-If you press =C-c C-c= with your point in the code block, a terminal
-window will pop up with a new tmux session named
-=org-babel-session-hello=.
+#+begin_src tmux :session sess
+python
+#+end_src
 
-You can continue work in this session with another code block.
-: #+BEGIN_SRC tmux :session hello
-: echo world
-: #+END_SRC
-If you press =C-c C-c= now, no new terminal window will open, but the
-code will be sent to the existing tmux session.
 
-You can also specify to which tmux window the source block should be
-sent. If the tmux window does not yet exist, ob-tmux will create it.
-To specify the window, you may use the tmux target syntax. In the
-following example, the ~:session~ argument has been changed to
-=hello:new-world=:
-: #+BEGIN_SRC tmux :session hello:new-window
-: echo hello world in new-window
-: #+END_SRC
-Executing this code block will add a window, ~new-window~, to your
-session.
+#+begin_src tmux :session sess :lang python
+import numpy as np
+from matplotlib import pyplot as plt
 
-You can parameterize scripts by using ~:var variable="value"~. This will add a
-line containing =variable="value"= preceding the content body.
-: #+begin_src tmux :var name="Ismael"
-: echo hello ${name}
-: #+end_src
+for f in range(3):
+    print(f)
 
-You can exit your tmux session by detaching. The terminal window will
-close automatically. Ob-tmux will not detect that you have
-detached. Any commands you send will be sent to the tmux session in
-the background. You can reattach to your tmux session at any time and
-check that the commands have indeed been executed.
+#+end_src
+```
 
-*Tip*. Ob-tmux is also very useful for restarting your tmux sessions
-after a reboot. Take a look at the following snippet.
-: ** Startup tmux
-: Use ~C-c C-v s~ to execute subtree.
-: *** Jupyter
-: #+BEGIN_SRC tmux :session daemons:jupyter
-: cd ~/projects/notebooks/
-: jupyter notebook
-: #+END_SRC
-: *** htop
-: #+BEGIN_SRC tmux session daemons:htop
-: htop
-: #+END_SRC
-: *** dmesg
-: #+BEGIN_SRC tmux :session daemons:dmesg
-: dmesg
-: #+END_SRC
-If your point is on the =Startup tmux= header, you can execute all
-code blocks in the subtree with ~C-c C-v s~ to restart your favorite
-tmux sessions.
-** Sockets: remoting
-If you want your code to execute on a remote machine, you can use
-=ob-tmux= too. There are two ways to control a remote machine. The
-first is to simply SSH into the remote machine and execute code from
-there:
 
-: #+BEGIN_SRC tmux
-: ssh remote-machine
-: #+END_SRC
-: #+BEGIN_SRC tmux
-: echo do things...
-: #+END_SRC
 
-This method has one big downside: long-running code might be
-interrupted when you lose connection. This method does not start a
-tmux session on the remote computer; it only starts a tmux session on
-the local computer.
-
-The other method is to start a remote tmux session and share the
-remote tmux socket with your local machine.
-It is possible to start a remote tmux session:
-#+BEGIN_SRC sh
-ssh remote-machine -t tmux new -d
-#+END_SRC
-This creates a socket on the remote machine. You can forward this
-socket to the local machine as follows:
-#+BEGIN_SRC sh
-  REMOTE_SOCKET=$(ssh remote-machine  'tmux ls -F "#{socket_path}"' | head -1)
-  echo $REMOTE_SOCKET
-  ssh remote-machine -tfN \
-      -L ~/.tmux-local-socket-remote-machine:$REMOTE_SOCKET
-#+END_SRC
-
-Now you can execute code on the remote machine:
-: #+BEGIN_SRC tmux :socket ~/.tmux-local-socket-remote-machine :session hello
-: echo hello from remote machine
-: #+END_SRC
-
-There are some advantages to this method, especially with long running
-jobs. For instance, if your local machine is rebooted the remote tmux
-session remains running and you can always reconnect. Furthermore, you
-do not have to prepend =ssh remote-machine= to every tmux source code
-block. This saves time and makes sure that you code is reexecutable:
-you can execute the same code block twice and it will (hopefully) work
-the same. It will not try to SSH into the remote machine again while
-it is already logged in remotely.
-
-* Known bugs and or possible issues
-My tmux indexes start at 1. By default, tmux window indexes start at
-zero. This might lead to problems. I have not yet checked.
-
-I will try to respond within a week to any issues raised. I cannot
-promise I will fix them.
-* Contributions
-Contributions are always welcome. Please be in touch before you make
-sweeping changes or add large features. This may prevent
-disappointment and will help me help you.
