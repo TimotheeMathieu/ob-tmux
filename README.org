@@ -28,6 +28,7 @@ my org files.
 
 Example of org-mode file:
 
+#+begin_src  text
 # -*- mode: org;  mode:visual-line ; mode:poly-tmux -*-
 
 #+begin_src tmux :session sess
@@ -43,6 +44,6 @@ for f in range(3):
     print(f)
 
 #+end_src
-
+#+end_src
 
 
