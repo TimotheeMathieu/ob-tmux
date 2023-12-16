@@ -5,7 +5,7 @@
 ;; URL: https://github.com/ahendriksen/ob-tmux
 ;; Version: 0.1.6
 ;; Package-version: 0.1.6
-;; Package-Requires: ((emacs "25.1") (seq "2.3") (s "1.9.0") ("polymode") ("org"))
+;; Package-Requires: ((emacs "25.1") (seq "2.3") (s "1.9.0") (polymode "0.2.2"))
 
 ;; This file is NOT part of GNU Emacs.
 
