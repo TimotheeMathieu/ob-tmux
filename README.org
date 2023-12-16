@@ -26,9 +26,8 @@ changes to the main ob-tmux features to accomodate python. The
 polymode is declared locally on each file so as not to polute all
 my org files.
 
-Example of org-mode file:
+Example of org-mode file (look in raw, this does not render well in github):
 
-#+begin_src  text
 # -*- mode: org;  mode:visual-line ; mode:poly-tmux -*-
 
 #+begin_src tmux :session sess
@@ -43,7 +42,6 @@ from matplotlib import pyplot as plt
 for f in range(3):
     print(f)
 
-#+end_src
 #+end_src
 
 
