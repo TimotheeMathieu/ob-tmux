@@ -1,14 +1,11 @@
 ;;; ob-tmux.el --- Babel Support for Interactive Terminal -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2009-2017 Free Software Foundation, Inc.
-;; Copyright (C) 2017 Allard Hendriksen
-
-;; Author: Allard Hendriksen
+;; Initial Author: Allard Hendriksen
 ;; Keywords: literate programming, interactive shell, tmux
 ;; URL: https://github.com/ahendriksen/ob-tmux
-;; Version: 0.1.5
-;; Package-version: 0.1.5
-;; Package-Requires: ((emacs "25.1") (seq "2.3") (s "1.9.0"))
+;; Version: 0.1.6
+;; Package-version: 0.1.6
+;; Package-Requires: ((emacs "25.1") (seq "2.3") (s "1.9.0") ("polymode") ("org"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -42,6 +39,9 @@
 (require 'ob)
 (require 'seq)
 (require 's)
+(require 'polymode)
+(require 'org)
+(require 'org-src)
 
 (defcustom org-babel-tmux-location "tmux"
   "The command location for tmux.
@@ -408,9 +408,7 @@ Argument PATH: the location of the file."
 ;;; Code:
 
 
-(require 'polymode)
-(require 'org)
-(require 'org-src)
+
 
 (defun poly-tmux-mode-matcher ()
   (let ((case-fold-search t))
